@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import torch.utils.data
 import numpy as np
 
+#TODO write function to initialize network weights in the same way ResNet paper does
+def weight_init():
+    raise NotImplementedError
 
 def main():
 
@@ -17,18 +20,23 @@ def main():
     #Directory leading to image folders from cwd of script
     dataroot = '../dataset/AugmentedAlzheimerDataset'
 
-    #Choose base 2 number, will simplify convolutional layers
-    image_size = 256
+    #Image size used in ResNet paper
+    image_size = 224
+
+    #Number of classes
+    nc = 4
 
     #Mean and std to normalize images to
     mean = 0
     std = 1
 
-    #Batch size for training, too large and you may overload your GPU memory
-    batch_size = 128
+    #Batch size for training, too large and you may overload your GPU memory. 
+    #I choose batch size used in ResNet paper
+    batch_size = 256
 
     #Nummber of threads used by dataloader object
     workers = 2
+
 
     #If true we will print one batch of images from dataloader
     printBatch = False
@@ -62,7 +70,7 @@ def main():
         plt.imshow(np.transpose(torchvision.utils.make_grid(batch[0].to(device)[:64], padding=2, normalize=True).cpu(),(1,2,0)))
         plt.show()
 
-        
+
 
 if __name__ == '__main__':
     main()
