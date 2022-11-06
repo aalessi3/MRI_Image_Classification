@@ -10,7 +10,7 @@ size of the image by 1/2. This is achived by stride length of two for our DownSa
 class ResBlock(nn.Module):
 
     def __init__(self, in_chan, out_chan, downsample):
-        super(ResBlock, self).__init__
+        super(ResBlock, self).__init__()
         
         if downsample:
             stride = 2
@@ -28,8 +28,9 @@ class ResBlock(nn.Module):
                 nn.ReLU(inplace=True),
                 nn.Conv2d(out_chan, out_chan, 3, 1, 1),
                 nn.BatchNorm2d(out_chan),
+                nn.ReLU(inplace=True),
             )
-        self.relu = nn.ReLU
+        self.relu = nn.ReLU(inplace=True)
     
     def forward(self, x):
         return self.relu(self.main(x) + self.shortcut(x))
