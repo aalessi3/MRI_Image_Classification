@@ -31,7 +31,7 @@ def train(model, num_epoch, dataloader):
     optomizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9 )
 
     #Book keeping 
-    runningLoss = []
+    runningLoss = 0
 
     for epoch in range(num_epoch):
         for i, (X,y) in enumerate(dataloader, 0):
