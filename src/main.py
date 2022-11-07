@@ -7,6 +7,9 @@ import torch.utils.data
 import numpy as np
 from ResNet18 import ResNet
 from torch.utils.tensorboard import SummaryWriter
+from torchmetrics import Accuracy
+
+
 
 writer = SummaryWriter(log_dir='../tensorboard')
 
@@ -89,7 +92,7 @@ def main():
     printBatch = False
 
     #number of epochs for training
-    num_epoch = 5
+    num_epoch = 35
 
     '''This is a dataset object, it will access all the photos in the subdirectories of root
     and when those photos are loaded it will perform the transformations sepcified by transform. 
