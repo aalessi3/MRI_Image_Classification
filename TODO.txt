@@ -1,0 +1,7 @@
+Create Validation set and include validation loss and accuracy in training loop
+Add dropout to training : See affects on accuracy
+Add self attention 
+  - Use self attention to increase "explainability" of network decisions
+  - With prop P remove some fraction of image with largest attention weights and train using these images
+  
+Build Vision Tranformer to compare the affectivness of the two network strcutures *Note : This may be simpiler to do in Tensorflow as there are more resources for this library in regards to TF
