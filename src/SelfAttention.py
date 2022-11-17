@@ -1,3 +1,9 @@
+"""
+This is Self Attention class used for CNNs
+Resource: https://medium.com/mlearning-ai/self-attention-in-convolutional-neural-networks-172d947afc00
+Last update: 2022/11/16
+
+"""
 import pytorch
 class SelfAttention(Module):
     "Self attention layer for `n_channels`."
@@ -16,5 +22,3 @@ class SelfAttention(Module):
         beta = F.softmax(torch.bmm(f.transpose(1,2), g), dim=1)
         o = self.gamma * torch.bmm(h, beta) + x
         return o.view(*size).contiguous()
-
-view rawgistfile1.py hosted with ❤ by GitHub
