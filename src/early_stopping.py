@@ -16,7 +16,6 @@ class EarlyStopping(float: min_delta = 0, int: patience = 0):
   best_metric: float = float('-inf')
   patience_count: int = 0
   should_stop: bool = False
-  min_updates: int = 5
 
   def reset(self):
     return self.replace(
