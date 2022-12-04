@@ -38,6 +38,7 @@ def train(model, num_epoch, train_dataloader, val_dataloader):
     criterion = torch.nn.CrossEntropyLoss()
     #SGD with the following params is specified in the paper
     optomizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9 )
+    # optomizer = torch.optim.Adam(model.parameters(), lr = 0.1)
 
     f1_score = F1Score(num_classes=4).to(device)
     #Book keeping 
@@ -48,6 +49,7 @@ def train(model, num_epoch, train_dataloader, val_dataloader):
     for epoch in range(num_epoch):
         for i, (X,y) in enumerate(train_dataloader, 0):
             #Zero gradients after reach batch 
+            model.train()
             optomizer.zero_grad()
 
             output = model(X.to(device))
@@ -58,12 +60,14 @@ def train(model, num_epoch, train_dataloader, val_dataloader):
             runningLoss += float(loss)
         
         for i, (X,y) in enumerate(val_dataloader, 0):
-            torch.cuda.empty_cache()
-            torch.no_grad()
+            # torch.cuda.empty_cache()
+            # torch.no_grad()
+            model.eval()
             output = model(X.to(device))
             loss = criterion(output, y.to(device))
             val_loss += float(loss)
             running_f1 += f1_score(output, y.to(device))
+            
         
         f1 = running_f1/len(val_dataloader)
                            
@@ -71,6 +75,7 @@ def train(model, num_epoch, train_dataloader, val_dataloader):
         writer.add_scalar("Loss_Train", runningLoss/len(train_dataloader), epoch)
         writer.add_scalar("Loss_Val", val_loss/len(val_dataloader), epoch)
         writer.add_scalar("F1_Score", f1, epoch)
+        # writer.add_scalar("Accuracy", accuracy, epoch)
         runningLoss = 0
         val_loss = 0
         running_f1 = 0
@@ -105,7 +110,7 @@ def main():
 
     #Batch size for training, too large and you may overload your GPU memory. 
     #I choose batch size used in ResNet paper
-    batch_size = 32
+    batch_size = 64
 
     #Nummber of threads used by dataloader object
     workers = 2

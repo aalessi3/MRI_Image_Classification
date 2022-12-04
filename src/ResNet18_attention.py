@@ -14,7 +14,6 @@ class ResNet(nn.Module):
             ResBlock(64, 64, downsample=False),
             ResBlock(64, 64, downsample=False),
         )
-        
         self.layer_2 = nn.Sequential(
             ResBlock(64, 128, downsample=True),
             ResBlock(128, 128, downsample=False),
