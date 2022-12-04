@@ -8,9 +8,10 @@ import numpy as np
 from ResNet18 import ResNet
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy
+from sklearn.model_selection import KFold
 
-
-
+n_splits = 10
+kfold = KFold(n_splits=n_splits, shuffle=True)
 writer = SummaryWriter(log_dir='../tensorboard')
 
 #Use GPU if your PC is configured to do so (i.e you have a Nvidia capable GPU, cuda toolkit and cudnn installed and pytorch with cuda installed)
@@ -28,31 +29,55 @@ def weight_init(model):
         nn.init.constant_(model.bias.data, 0)
 
 #TODO finish training loop
-def train(model, num_epoch, dataloader):
+def train(model, num_epoch, dataloader, dataset, batchSize):
     criterion = torch.nn.CrossEntropyLoss()
     #SGD with the following params is specified in the paper
-    optomizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9 )
-
+    
+    accuracy = Accuracy(num_classes=4).to(device)
     #Book keeping 
     runningLoss = 0
+    for fold, (train_id, test_id) in enumerate(kfold.split(dataset)):
+        
+        train_subsampler = torch.utils.data.SubsetRandomSampler(train_id)
+        test_subsampler = torch.utils.data.SubsetRandomSampler(test_id)
 
-    for epoch in range(num_epoch):
-        for i, (X,y) in enumerate(dataloader, 0):
+        trainLoader = torch.utils.data.DataLoader(dataset=dataset, batch_size=batchSize, sampler= train_subsampler)
+        testLoader = torch.utils.data.DataLoader(dataset=dataset, batch_size=batchSize, sampler= test_subsampler)
+
+        optomizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9 )
+
+        for epoch in range(num_epoch):
+        #for i, (X,y) in enumerate(dataloader, 0):
+            runningLoss = 0
+            for i, data in enumerate(trainLoader, 0):
+                input, target = data
+                #print(input.shape)
             #Zero gradients after reach batch 
-            optomizer.zero_grad()
+                optomizer.zero_grad()
 
-            output = model(X.to(device))
-            loss = criterion(output, y.to(device))
-            loss.backward()
-            optomizer.step()
-
-            runningLoss += loss
+                output = model(input.to(device))
+                loss = criterion(output, target.to(device))
+                loss.backward()
+                optomizer.step()
+                runningLoss += loss
             
                 
-        print(f"[{epoch +1}\{num_epoch}]:\t Loss: {runningLoss / len(dataloader)}")
-        writer.add_scalar("Loss_Train", runningLoss/len(dataloader), epoch)
-        runningLoss = 0
-        torch.save(model, f'../models/ResNet_E[{epoch+1}].pth')
+            print(f"[{epoch +1}\{num_epoch}]:\t Loss: {runningLoss}")
+        #writer.add_scalar("Loss_Train", runningLoss/len(dataloader), epoch)
+        
+        torch.save(model, f'../models/ResNet_E_Fold[{fold+1}].pth')
+        acc = []
+        for i, data in enumerate(testLoader, 0):
+            input, target = data
+            output = model(input.to(device))
+
+            acc.append(accuracy(output, target.to(device)).cpu())
+
+        accNP = np.array(acc)
+        print(f'Folds : {fold} \t Accuracy {accNP.mean()}')
+
+
+
 
         
         
@@ -83,7 +108,7 @@ def main():
 
     #Batch size for training, too large and you may overload your GPU memory. 
     #I choose batch size used in ResNet paper
-    batch_size = 256
+    batch_size = 64
 
     #Nummber of threads used by dataloader object
     workers = 2
@@ -92,7 +117,7 @@ def main():
     printBatch = False
 
     #number of epochs for training
-    num_epoch = 35
+    num_epoch = 1
 
     '''This is a dataset object, it will access all the photos in the subdirectories of root
     and when those photos are loaded it will perform the transformations sepcified by transform. 
@@ -104,7 +129,7 @@ def main():
                                                     transforms.ToTensor(), 
                                                     transforms.Normalize((mean, mean, mean), (std, std, std))
                                                 ]))
-
+    
     #Print some info about the dataset
     print(f'Image labels and label index : {dataset.class_to_idx}')
     print(f'Dataset size: {len(dataset)}')
@@ -128,8 +153,8 @@ def main():
     model.apply(weight_init).to(device)
 
 
-    train(model = model, num_epoch = num_epoch, dataloader= dataloader)
-    #write all pending data to writer and close it
+    train(model = model, num_epoch = num_epoch, dataloader= dataloader, dataset=dataset, batchSize=batch_size)
+    #write all pending data to writer and close it, 
     writer.flush()
     writer.close()
 

@@ -4,7 +4,6 @@ from resblock import ResBlock
 class ResNet(nn.Module):
     def __init__(self, n_channels, n_classes):
         super(ResNet, self).__init__()
-
         self.layer_0 = nn.Sequential(
             nn.Conv2d(in_channels=n_channels, out_channels=64,kernel_size= 7, stride= 2, padding= 3),
             nn.MaxPool2d(kernel_size=3, stride=2), 
@@ -31,7 +30,8 @@ class ResNet(nn.Module):
             nn.AdaptiveAvgPool2d(1),
             nn.Flatten(),
             nn.Linear(512, n_classes),
-            nn.Softmax(dim=n_classes)
+            nn.Softmax()
+            
         )
 
     
@@ -41,4 +41,5 @@ class ResNet(nn.Module):
         x = self.layer_2(x)
         x = self.layer_3(x)
         x = self.layer_4(x)
-        return self.layer_5(x)
+        return  self.layer_5(x)
+
