@@ -5,12 +5,13 @@ from torchvision import transforms
 import matplotlib.pyplot as plt
 import torch.utils.data
 import numpy as np
-from ResNet18 import ResNet
+from ResNet18_attention import ResNet
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score
 
 # from early_stopping import EarlyStopping
 
+accuracy = Accuracy(num_classes=4)
 
 #Used to save tensorboard figures
 writer = SummaryWriter(log_dir='../tensorboard')

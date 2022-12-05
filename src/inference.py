@@ -5,7 +5,7 @@ from torchmetrics import Accuracy
 from torchvision import transforms
 import numpy as np
 
-dataroot = '../dataset/OriginalDataset'
+dataroot = '../dataset/AugmentedAlzheimerDataset'
 
 device = "cuda:0" if torch.cuda.is_available() else 'cpu'
 
