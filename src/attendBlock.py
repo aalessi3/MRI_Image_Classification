@@ -1,3 +1,5 @@
+#TODO Implement attention block for self attention on images. Maybe we can add attention to the residual connections of the resnet??
+
 import torch.nn as nn
 
 class imageAttentionBlock(nn.Module):

@@ -5,13 +5,15 @@ from torchvision import transforms
 import matplotlib.pyplot as plt
 import torch.utils.data
 import numpy as np
-from ResNet18_attention import ResNet
+from ResNet18 import ResNet
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score
+from basic_CNN import basic_CNN
+import os
 
 # from early_stopping import EarlyStopping
 
-accuracy = Accuracy(num_classes=4)
+
 
 #Used to save tensorboard figures
 writer = SummaryWriter(log_dir='../tensorboard')
@@ -22,6 +24,7 @@ writer = SummaryWriter(log_dir='../tensorboard')
 #Use GPU if your PC is configured to do so (i.e you have a Nvidia capable GPU, cuda toolkit and cudnn installed and pytorch with cuda installed)
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
+accuracy = Accuracy(num_classes=4).to(device)
 
 #TODO This initizes weights in a simplier fashion than is 
 #done in the paper, not sure if this will cause performence issues
@@ -38,7 +41,7 @@ def train(model, num_epoch, train_dataloader, val_dataloader):
     print("Begining Training")
     criterion = torch.nn.CrossEntropyLoss()
     #SGD with the following params is specified in the paper
-    optomizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9 )
+    optomizer = torch.optim.SGD(model.parameters(), lr=.05, momentum=0.9 )
     # optomizer = torch.optim.Adam(model.parameters(), lr = 0.1)
 
     f1_score = F1Score(num_classes=4).to(device)
@@ -46,6 +49,9 @@ def train(model, num_epoch, train_dataloader, val_dataloader):
     runningLoss = 0
     val_loss = 0
     running_f1 = 0
+    acc = []
+
+    best_loss = np.inf
 
     for epoch in range(num_epoch):
         for i, (X,y) in enumerate(train_dataloader, 0):
@@ -68,19 +74,28 @@ def train(model, num_epoch, train_dataloader, val_dataloader):
             loss = criterion(output, y.to(device))
             val_loss += float(loss)
             running_f1 += f1_score(output, y.to(device))
+            acc.append(accuracy(output, y.to(device)).cpu())
             
         
         f1 = running_f1/len(val_dataloader)
+        avg_acc = np.array(acc).mean()
                            
-        print(f"[{epoch +1}\{num_epoch}]:\t Train_Loss: {runningLoss / len(train_dataloader)} Val_Loss: {val_loss/len(val_dataloader)} F1: {f1}")
+        print(f"[{epoch +1}\{num_epoch}]:\t Train_Loss: {runningLoss / len(train_dataloader)} Val_Loss: {val_loss/len(val_dataloader)} F1: {f1} Accuracy: {avg_acc}")
         writer.add_scalar("Loss_Train", runningLoss/len(train_dataloader), epoch)
         writer.add_scalar("Loss_Val", val_loss/len(val_dataloader), epoch)
         writer.add_scalar("F1_Score", f1, epoch)
+        writer.add_scalar("Accuracy", avg_acc, epoch)
         # writer.add_scalar("Accuracy", accuracy, epoch)
+        if (not os.path.isdir("../models")):
+            os.makedirs("../models")
+        if(val_loss < best_loss):
+            best_loss = val_loss
+            torch.save(model, f'../models/ResNet_E[{epoch+1}].pth')
         runningLoss = 0
         val_loss = 0
         running_f1 = 0
-        torch.save(model, f'../models/ResNet_E[{epoch+1}].pth')
+        acc = []
+        
 
         
         
@@ -95,6 +110,8 @@ def main():
 
     #Directory leading to image folders from cwd of script
     dataroot = '../dataset/AugmentedAlzheimerDataset'
+    # dataroot = '../dataset/OriginalDataset'
+
 
     #Image size used in ResNet paper
     image_size = 224
@@ -120,7 +137,7 @@ def main():
     printBatch = False
 
     #number of epochs for training
-    num_epoch = 35
+    num_epoch = 100
 
     '''This is a dataset object, it will access all the photos in the subdirectories of root
     and when those photos are loaded it will perform the transformations sepcified by transform. 
@@ -139,6 +156,7 @@ def main():
     # classes = dataset.classes
 
     train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(dataset=dataset, lengths= [0.7, 0.1, 0.2])
+    # train_dataset, val_dataset, test_dataset, _ = torch.utils.data.random_split(dataset=dataset, lengths= [0.2, 0.1, 0.2, 0.5])
 
     '''This is a dataloader, it wraps an iterator around our dataset object. It will return photos in batches of batch_size along with associated labels.
     It can do so using multiple threads defined by num_workers'''
@@ -160,7 +178,8 @@ def main():
         plt.show()
 
     '''create model and initialize weights'''
-    model = ResNet(n_channels=n_channels, n_classes=n_classes)
+    # model = ResNet(n_channels=n_channels, n_classes=n_classes)
+    model = basic_CNN()
     model.apply(weight_init).to(device)
 
 

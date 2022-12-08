@@ -31,7 +31,7 @@ class ResNet(nn.Module):
             nn.AdaptiveAvgPool2d(1),
             nn.Flatten(),
             nn.Linear(512, n_classes),
-            nn.Softmax()
+            nn.Softmax(dim = 1)
             
         )
 
