@@ -8,6 +8,8 @@ mri-dataset.
 
 
 # How to Run the Code:
-TODO
+1. Please cd into your preferred directory and git clone our repository. The top level directory should be "MRI_Image_Classification" with 'src' and 'dataset' subdirectories. 
+2. Access the directory with your preferred IDE and run the main_std_split.py script.
+
 
 
