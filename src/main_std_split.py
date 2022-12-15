@@ -6,9 +6,11 @@ import matplotlib.pyplot as plt
 import torch.utils.data
 import numpy as np
 from ResNet18 import ResNet
+from ResNet18_attention import ResNet_A
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score
 from basic_CNN import basic_CNN
+from basic_CNN_V2 import basic_CNN_V2
 import os
 
 # from early_stopping import EarlyStopping
@@ -24,7 +26,7 @@ writer = SummaryWriter(log_dir='../tensorboard')
 #Use GPU if your PC is configured to do so (i.e you have a Nvidia capable GPU, cuda toolkit and cudnn installed and pytorch with cuda installed)
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-accuracy = Accuracy(num_classes=4).to(device)
+accuracy = Accuracy(um_classes=4).to(device)
 
 #TODO This initizes weights in a simplier fashion than is 
 #done in the paper, not sure if this will cause performence issues
@@ -59,7 +61,7 @@ def train(model, num_epoch, train_dataloader, val_dataloader):
             model.train()
             optomizer.zero_grad()
 
-            output = model(X.to(device))
+            output= model(X.to(device))
             loss = criterion(output, y.to(device))
             loss.backward()
             optomizer.step()
@@ -70,7 +72,8 @@ def train(model, num_epoch, train_dataloader, val_dataloader):
             # torch.cuda.empty_cache()
             # torch.no_grad()
             model.eval()
-            output = model(X.to(device))
+            output= model(X.to(device))
+            # output = output[0]
             loss = criterion(output, y.to(device))
             val_loss += float(loss)
             running_f1 += f1_score(output, y.to(device))
@@ -110,6 +113,8 @@ def main():
 
     #Directory leading to image folders from cwd of script
     dataroot = '../dataset/AugmentedAlzheimerDataset'
+
+
     # dataroot = '../dataset/OriginalDataset'
 
 
@@ -179,7 +184,9 @@ def main():
 
     '''create model and initialize weights'''
     # model = ResNet(n_channels=n_channels, n_classes=n_classes)
-    model = basic_CNN()
+    # model = ResNet_A(n_channels=n_channels, n_classes=n_classes)
+    # model = basic_CNN()
+    model = basic_CNN_V2(n_channels=n_channels, n_classes=n_classes).to(device)
     model.apply(weight_init).to(device)
 
 

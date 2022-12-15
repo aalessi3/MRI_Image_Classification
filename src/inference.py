@@ -15,7 +15,7 @@ std = 1
 
 accuracy = Accuracy(num_classes=4).to(device)
 
-model = torch.load('../models/ResNet_E[35].pth').to(device)
+model = torch.load('../models_7_12_22/ResNet_E[94].pth').to(device)
 
 dataset = torchvision.datasets.ImageFolder(root = dataroot, 
                                                 transform=transforms.Compose([
