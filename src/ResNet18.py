@@ -1,6 +1,15 @@
 import torch.nn as nn
 from resblock import ResBlock
 
+'''
+This is a standard ResNet18 built to the specifications described in the paper "Deep Residual Learning for Image Recognition"
+
+    Args:
+        n_channels : Number of channels in input image
+        n_classes : Number of classes in classificiation task
+        x : input batch of images. Expected to be 224x224
+'''
+
 class ResNet(nn.Module):
     def __init__(self, n_channels, n_classes):
         super(ResNet, self).__init__()

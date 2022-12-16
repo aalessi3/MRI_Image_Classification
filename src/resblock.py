@@ -4,8 +4,8 @@
 import torch.nn as nn
 
 '''Whenever transitioning between layers we change the number of channels
-from x to 2x (64 to 128 for example), in order to do this we need to drop the 
-size of the image by 1/2. This is achived by stride length of two for our DownSampling
+from x to 2x (64 to 128 for example), when doing this we also change each img dim 1/2. 
+This is achived by stride length of two for our DownSampling
 '''
 class ResBlock(nn.Module):
 

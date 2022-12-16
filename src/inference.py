@@ -5,6 +5,10 @@ from torchmetrics import Accuracy
 from torchvision import transforms
 import numpy as np
 
+'''
+This script is used to evaluate the accuracy of a given model on a dataset. Simply load the desired model and dataset by providing the appropriate relative paths
+'''
+
 dataroot = '../dataset/AugmentedAlzheimerDataset'
 
 device = "cuda:0" if torch.cuda.is_available() else 'cpu'
