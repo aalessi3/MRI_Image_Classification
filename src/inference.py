@@ -9,7 +9,7 @@ import numpy as np
 This script is used to evaluate the accuracy of a given model on a dataset. Simply load the desired model and dataset by providing the appropriate relative paths
 '''
 
-dataroot = '../dataset/AugmentedAlzheimerDataset'
+dataroot = '../dataset/OriginalDataset'
 
 device = "cuda:0" if torch.cuda.is_available() else 'cpu'
 
@@ -19,7 +19,7 @@ std = 1
 
 accuracy = Accuracy(num_classes=4).to(device)
 
-model = torch.load('../models_7_12_22/ResNet_E[94].pth').to(device)
+model = torch.load('../bestModel/ResNet_18.pth').to(device)
 
 dataset = torchvision.datasets.ImageFolder(root = dataroot, 
                                                 transform=transforms.Compose([

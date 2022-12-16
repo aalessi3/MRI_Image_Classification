@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch
-from ImageSelfAttention import ImageSelfAttention
+from ImageSelfAttention import ImageSelfAttention_2
 
 '''This is a basic 5 layer CNN used to evalaute the effects of self attention on a small, easy to train network. This was used in development because of a lack of large compute.
 
@@ -16,7 +16,7 @@ class basic_CNN(nn.Module):
     def __init__(self, ):
         super(basic_CNN, self).__init__()
 
-        self.attend = ImageSelfAttention(3)
+        self.attend = ImageSelfAttention_2(3)
 
         self.main = nn.Sequential(
             nn.Conv2d(3, 6, kernel_size=3, stride=2, padding=1), #[B x 3 x 224 x 224] ---> [B x 6 x 112 X 112]

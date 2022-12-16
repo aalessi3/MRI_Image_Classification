@@ -10,7 +10,7 @@ from ResNet18_attention import ResNet_A
 from torch.utils.tensorboard import SummaryWriter
 from torchmetrics import Accuracy, F1Score
 from basic_CNN import basic_CNN
-from CNN_18 import CNN_18
+from basic_CNN_V2 import basic_CNN_V2
 import os
 
 '''
@@ -190,7 +190,7 @@ def main():
     # model = ResNet(n_channels=n_channels, n_classes=n_classes)
     # model = ResNet_A(n_channels=n_channels, n_classes=n_classes)
     # model = basic_CNN()
-    model = CNN_18(n_channels=n_channels, n_classes=n_classes).to(device)
+    model = basic_CNN_V2(n_channels=n_channels, n_classes=n_classes).to(device)
     model.apply(weight_init).to(device)
 
 

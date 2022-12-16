@@ -1,6 +1,6 @@
 import torch.nn as nn
 from resblock import ResBlock
-from basic_CNN import ImageSelfAttention
+from ImageSelfAttention import ImageSelfAttention_2
 
 '''
 This is a standard ResNet18 model with self attention applied to the input. Self attention was applied in various locations and was found to performe best when only applied to the 
@@ -15,9 +15,10 @@ begining  of the network
 class ResNet_A(nn.Module):
     def __init__(self, n_channels, n_classes):
         super(ResNet_A, self).__init__()
-        self.attend = ImageSelfAttention(input_channels=n_channels)
+        # self.attend = ImageSelfAttention_2(input_channels=n_channels)
 
         self.layer_0 = nn.Sequential(
+            ImageSelfAttention_2(input_channels=n_channels),
             nn.Conv2d(in_channels=n_channels, out_channels=64,kernel_size= 7, stride= 2, padding= 3),
             nn.MaxPool2d(kernel_size=3, stride=2), 
             nn.BatchNorm2d(num_features=64),
@@ -57,7 +58,7 @@ class ResNet_A(nn.Module):
 
     
     def forward(self, x):
-        x = self.attend(x)
+        # x = self.attend(x)
         x = self.layer_0(x)
         x = self.layer_1(x)
         x = self.layer_2(x)

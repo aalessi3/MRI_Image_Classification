@@ -12,7 +12,7 @@ import torch
         attend : Attention weight matrix
 '''
 
-class ImageSelfAttention(nn.Module):
+class ImageSelfAttention_2(nn.Module):
     def __init__(self, input_channels):
         super().__init__()
         '''1x1 Conv is used to compress n channel input to single channel. Attention operation is too expensive to apply to all channels'''
@@ -32,4 +32,4 @@ class ImageSelfAttention(nn.Module):
         attend = self.flatten(attend)
         attend = self.soft_max(attend)
         attend = attend.view(x.size(0), x.size(2), x.size(3)) #[N, w, h]
-        return self.final_conv(torch.bmm(attend, v).unsqueeze(1)) + x, attend
+        return self.final_conv(torch.bmm(attend, v).unsqueeze(1)) + x

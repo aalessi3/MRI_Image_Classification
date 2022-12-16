@@ -12,9 +12,9 @@ classification task.
         result : tensor of length n_channels with indicies representing the probability of a given class
 '''
 
-class CNN_18(nn.Module):
+class basic_CNN_V2(nn.Module):
     def __init__(self, n_channels, n_classes):
-        super(CNN_18, self).__init__()
+        super(basic_CNN_V2, self).__init__()
         self.main = nn.Sequential(
             nn.Conv2d(in_channels=n_channels, out_channels=64,kernel_size= 7, stride= 2, padding= 3),
             nn.MaxPool2d(kernel_size=3, stride=2), 
