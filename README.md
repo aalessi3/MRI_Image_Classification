@@ -15,6 +15,8 @@ mri-dataset.
 5. Models will be saved in a generated models folder and tensorboard .event files are saved in a generated tensorboard folder during training
 6. Inference.py can be used to perform inference using any given model.pth file and dataroot. 
 
+Alex - Test Edit
+
 
 # Environment:
 Created using python 3.10.6, all dependencies included in requirments.txt
