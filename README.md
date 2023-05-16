@@ -1,5 +1,4 @@
 # MRI_Image_Classification - Using Deep Neural Networks to Detect Dementia
-aalessi3, rsiege15, ksuzuki6
 
 This code base enables the contruction, training and evaluation of multiple deep neural network architectures. The task of these networks is to classify MRI brain scans into classes representing varying severities of dementia. The effects of residual connections as well as scaled dot product attention is investigated .The data used for training and evaluation is taken from Kaggle cited below:
 
